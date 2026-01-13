@@ -34,7 +34,7 @@ public class Expense {
         this.type = type;
     }
 
-    // Getter (Setter später optional)
+    // Getter 
     public Long getId() {
         return id;
     }
@@ -57,5 +57,26 @@ public class Expense {
 
     public ExpenseType getType() {
         return type;
+    }
+
+    // Setter 
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setType(ExpenseType type) {
+        this.type = type;
     }
 }

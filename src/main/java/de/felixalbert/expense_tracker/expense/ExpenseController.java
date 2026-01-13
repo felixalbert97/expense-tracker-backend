@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.util.List;
 
@@ -38,5 +39,23 @@ public class ExpenseController {
         }
         expenseRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Expense> updateExpense(
+            @PathVariable Long id,
+            @RequestBody Expense updatedExpense) {
+
+        return expenseRepository.findById(id)
+                .map(expense -> {
+                    expense.setAmount(updatedExpense.getAmount());
+                    expense.setCategory(updatedExpense.getCategory());
+                    expense.setDate(updatedExpense.getDate());
+                    expense.setDescription(updatedExpense.getDescription());
+                    expense.setType(updatedExpense.getType());
+                    expenseRepository.save(expense);
+                    return ResponseEntity.ok(expense);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
