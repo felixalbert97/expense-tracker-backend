@@ -16,21 +16,23 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initExpenses(ExpenseRepository repository) {
         return args -> {
-            repository.save(new Expense(
-                    new BigDecimal("50.00"),
-                    "Groceries",
-                    LocalDate.now(),
-                    "Supermarket",
-                    ExpenseType.EXPENSE
-            ));
+            if (repository.count() == 0){
+                repository.save(new Expense(
+                        new BigDecimal("50.00"),
+                        "Groceries",
+                        LocalDate.now(),
+                        "Supermarket",
+                        ExpenseType.EXPENSE
+                ));
 
-            repository.save(new Expense(
-                    new BigDecimal("2000.00"),
-                    "Salary",
-                    LocalDate.now(),
-                    "Monthly salary",
-                    ExpenseType.INCOME
-            ));
+                repository.save(new Expense(
+                        new BigDecimal("2000.00"),
+                        "Salary",
+                        LocalDate.now(),
+                        "Monthly salary",
+                        ExpenseType.INCOME
+                ));
+            }
         };
     }
 }
