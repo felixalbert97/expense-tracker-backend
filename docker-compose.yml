@@ -1,20 +1,27 @@
-version: "3.8"
-
 services:
   postgres:
     image: postgres:16
     container_name: expense-postgres
-
-    ports:
-      - "5432:5432"
-
     environment:
       POSTGRES_DB: expensetracker
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    image: expense-tracker-backend
+    container_name: expense-backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/expensetracker
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
 
 volumes:
   postgres_data:
