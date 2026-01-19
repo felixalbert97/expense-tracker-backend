@@ -63,25 +63,44 @@ The focus was on learning Docker, deployment, and environment configuration.
 
 ## 📂 Project Structure
 
-expense-tracker-backend/  
-├── src/main/java/de.felixalbert.expense_tracker  
-│ ├── config  
-│ │ └── CorsConfig.java  
-│ ├── expense  
-│ │ ├── Expense.java  
-│ │ ├── ExpenseController.java  
-│ │ ├── ExpenseRepository.java  
-│ │ └── ExpenseType.java  
-│ ├── DataInitializer.java  
-│ └── ExpenseTrackerApplication.java  
-├── src/main/resources  
-│ ├── application.properties  
-│ ├── application-local.properties  
-│ └── application-prod.properties  
-├── Dockerfile  
-├── docker-compose.local.yml  
-├── docker-compose.yml  
-└── README.md
+```
+expense-tracker-backend/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── de/felixalbert/expensetracker/
+│   │   │       ├── ExpenseTrackerApplication.java
+│   │   │       ├── config/
+│   │   │       │   └── CorsConfig.java
+│   │   │       ├── expense/
+│   │   │       │   ├── controller/
+│   │   │       │   │   └── ExpenseController.java
+│   │   │       │   ├── service/
+│   │   │       │   │   └── ExpenseService.java
+│   │   │       │   ├── repository/
+│   │   │       │   │   └── ExpenseRepository.java
+│   │   │       │   ├── model/
+│   │   │       │   │   ├── Expense.java
+│   │   │       │   │   └── ExpenseType.java
+│   │   │       │   └── DataInitializer.java
+│   │   │       └── common/
+│   │   │           └── exception/
+│   │   │               └── GlobalExceptionHandler.java    # (currently empty / future use)
+│   │   └── resources/
+│   │       ├── application.properties
+│   │       ├── application-local.properties
+│   │       └── application-prod.properties
+│   └── test/
+│       └── java/                                          # (currently empty / future use)
+├── Dockerfile
+├── docker-compose.yml
+├── docker-compose.local.yml
+├── README.md
+└── .gitignore
+```
+
+The backend follows a layered architecture (controller, service, repository, model) to ensure clear separation of concerns and scalability.
+Some layers are intentionally kept minimal as the focus of this project is infrastructure and deployment rather than feature completeness.
 
 ---
 
@@ -253,3 +272,4 @@ Environment variables are used for all production-specific configuration:
 ## 📄 License
 
 This project is for demonstration and learning purposes. 
+
