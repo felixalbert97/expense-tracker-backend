@@ -1,4 +1,4 @@
-package de.felixalbert.expense_tracker;
+package de.felixalbert.expensetracker;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

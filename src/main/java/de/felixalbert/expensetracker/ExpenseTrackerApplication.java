@@ -1,4 +1,4 @@
-package de.felixalbert.expense_tracker;
+package de.felixalbert.expensetracker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,11 +1,12 @@
-package de.felixalbert.expense_tracker;
+package de.felixalbert.expensetracker.expense;
 
-import de.felixalbert.expense_tracker.expense.Expense;
-import de.felixalbert.expense_tracker.expense.ExpenseRepository;
-import de.felixalbert.expense_tracker.expense.ExpenseType;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import de.felixalbert.expensetracker.expense.model.Expense;
+import de.felixalbert.expensetracker.expense.model.ExpenseType;
+import de.felixalbert.expensetracker.expense.repository.ExpenseRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

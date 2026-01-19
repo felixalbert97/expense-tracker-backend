@@ -1,4 +1,4 @@
-package de.felixalbert.expense_tracker.expense;
+package de.felixalbert.expensetracker.expense.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
