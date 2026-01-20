@@ -149,10 +149,15 @@ Spring Profiles are primarily used when running the application locally via IDE 
 
         docker compose -f docker-compose.local.yml up -d
 
-This starts a PostgreSQL container on port 5432.
+    This starts a PostgreSQL container on port 5432.
 
-3. Start the application with the local profile using Maven:
+3. Start the application with the local profile using Maven:  
+    (on Windows)
+   
+        ./mvnw "-Dspring-boot.run.profiles=local" spring-boot:run
 
+    (on Unix/macOS)
+   
         SPRING_PROFILES_ACTIVE=local ./mvnw spring-boot:run
 
 Or directly from your IDE (VS Code / IntelliJ) using the local profile.
