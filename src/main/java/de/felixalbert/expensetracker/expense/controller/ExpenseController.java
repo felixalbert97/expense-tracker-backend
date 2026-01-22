@@ -19,13 +19,13 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public List<Expense> getAllExpenses() {
-        return expenseService.findAll();
+    public ResponseEntity<List<Expense>> getAllExpenses() {
+        return ResponseEntity.ok(expenseService.findAll());
     }
 
     @PostMapping
-    public Expense createExpense(@RequestBody Expense expense) {
-        return expenseService.create(expense);
+    public ResponseEntity<Expense> createExpense(@RequestBody Expense expense) {
+        return ResponseEntity.ok(expenseService.create(expense)); // change that later to code 201 (created) and provide URI
     }
 
     @DeleteMapping("/{id}")
