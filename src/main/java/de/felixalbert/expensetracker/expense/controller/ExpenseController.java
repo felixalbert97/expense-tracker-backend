@@ -2,6 +2,7 @@ package de.felixalbert.expensetracker.expense.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,31 +26,23 @@ public class ExpenseController {
 
     @PostMapping
     public ResponseEntity<Expense> createExpense(@RequestBody Expense expense) {
-        return ResponseEntity.ok(expenseService.create(expense)); // change that later to code 201 (created) and provide URI
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
-        boolean deleted = expenseService.deleteById(id);
-
-        if (!deleted) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.noContent().build();
+        Expense created = expenseService.create(expense);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Expense> updateExpense(
             @PathVariable Long id,
             @RequestBody Expense updatedExpense) {
-
-        Expense expense = expenseService.update(id, updatedExpense);
-
-        if (expense == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(expense);
+        return ResponseEntity.ok(expenseService.update(id, updatedExpense));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteExpense(@PathVariable Long id) {
+        expenseService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    
 }

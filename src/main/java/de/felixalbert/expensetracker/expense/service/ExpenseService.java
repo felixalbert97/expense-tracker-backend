@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import de.felixalbert.expensetracker.expense.exception.ExpenseNotFoundException;
 import de.felixalbert.expensetracker.expense.model.Expense;
 import de.felixalbert.expensetracker.expense.repository.ExpenseRepository;
 
@@ -24,24 +25,23 @@ public class ExpenseService {
         return expenseRepository.save(expense);
     }
 
-    public boolean deleteById(Long id) {
+    public void deleteById(Long id) {
         if (!expenseRepository.existsById(id)) {
-            return false;
+            throw new ExpenseNotFoundException(id);
         }
         expenseRepository.deleteById(id);
-        return true;
     }
 
     public Expense update(Long id, Expense updatedExpense) {
-        return expenseRepository.findById(id)
-                .map(expense -> {
-                    expense.setAmount(updatedExpense.getAmount());
-                    expense.setCategory(updatedExpense.getCategory());
-                    expense.setDate(updatedExpense.getDate());
-                    expense.setDescription(updatedExpense.getDescription());
-                    expense.setType(updatedExpense.getType());
-                    return expenseRepository.save(expense);
-                })
-                .orElse(null);
-    }
+    Expense expense = expenseRepository.findById(id)
+        .orElseThrow(() -> new ExpenseNotFoundException(id));
+
+    expense.setAmount(updatedExpense.getAmount());
+    expense.setCategory(updatedExpense.getCategory());
+    expense.setDate(updatedExpense.getDate());
+    expense.setDescription(updatedExpense.getDescription());
+    expense.setType(updatedExpense.getType());
+
+    return expenseRepository.save(expense);
+}
 }
