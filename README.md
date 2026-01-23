@@ -1,24 +1,98 @@
 # Expense Tracker – Backend
 
-This repository contains the backend of an Expense Tracker application built with **Spring Boot**.  
-It provides a REST API for managing expenses and incomes and is designed to run both locally and in the cloud.
+Backend service for an Expense Tracker application built with **Spring Boot**.
 
-The backend is containerized with **Docker**, uses **PostgreSQL** as its primary database, and is deployed to **Railway**.
+The application exposes a REST API for managing expenses and incomes and is designed
+to run **locally, containerized, and in the cloud**.
+
+**Key focus:** backend architecture, testing strategy, and production-ready configuration.
 
 ---
 
 ## 🎯 Project Goal
 
-The main goal of this project was to gain hands-on experience with:
+The main goal of this project was to gain hands-on experience with **professional backend development practices**, including:
 
-- Building a REST API using Spring Boot
-- Environment-based configuration with Spring Profiles
-- Dockerizing a backend application
-- Running PostgreSQL in Docker
-- Deploying a containerized backend to the cloud (Railway)
-- Connecting a deployed backend to a separate frontend (Vercel)
+* Designing a clean REST API with centralized exception handling
+* Applying a layered testing strategy (unit, web, persistence)
+* Environment-based configuration using Spring Profiles
+* Containerizing a Spring Boot application with Docker
+* Running PostgreSQL locally and in production
+* Deploying a containerized backend to the cloud (Railway)
+* Connecting a deployed backend to a separate frontend (Vercel)
 
-The focus of this project is **infrastructure, deployment, and configuration**, not feature completeness.
+The focus of this project is **architecture, testability, and deployment**, not feature completeness.
+
+---
+
+## ✨ Features
+
+* RESTful API for managing expenses and incomes
+* CRUD operations for expenses
+* Centralized exception handling via a global exception handler
+* Layered architecture (controller, service, repository)
+* Environment-based configuration using Spring Profiles
+* PostgreSQL database (local & production)
+* Dockerized setup for local development and production
+* Deployed to Railway
+
+---
+
+## 🧪 Testing Strategy (Key Highlight)
+
+This project follows a **layered testing approach** to ensure fast feedback,
+clear responsibilities per test type, and long-term maintainability.
+
+The focus is on **deterministic and fast tests**, rather than many slow end-to-end tests.
+
+### Test Types
+
+#### 1. Service Layer – Unit Tests
+
+* Business logic tested in isolation
+* Repository dependencies are mocked
+* Verifies domain behavior and exception handling
+
+**Goal:**
+Validate business rules without infrastructure dependencies.
+
+---
+
+#### 2. Web Layer – Controller Tests
+
+* Uses `@WebMvcTest`
+* Tests HTTP status codes, request/response mapping, and JSON payloads
+* Service layer is mocked
+
+**Goal:**
+Verify the REST API contract independently of persistence concerns.
+
+---
+
+#### 3. Persistence Layer – Integration Tests
+
+* Uses `@DataJpaTest`
+* Runs against an in-memory H2 database (PostgreSQL compatibility mode)
+* Verifies JPA mappings and repository behavior
+
+**Goal:**
+Ensure correct persistence behavior while keeping tests fast and portable.
+
+---
+
+### Why no full End-to-End Tests?
+
+Full end-to-end tests (HTTP → Service → Database) were intentionally kept minimal:
+
+* They are slower and harder to maintain
+* They often duplicate coverage provided by layered tests
+* For this project’s scope, they provide limited additional value
+
+This approach provides a good balance between:
+
+* confidence
+* execution speed
+* maintainability
 
 ---
 
@@ -26,38 +100,30 @@ The focus of this project is **infrastructure, deployment, and configuration**, 
 
 The following aspects were intentionally kept minimal or are not included:
 
-- Automated tests (unit / integration)
-- Authentication & authorization
-- Advanced validation & error handling
-- Pagination, filtering, or sorting
-- CI/CD pipelines
+* Comprehensive input validation (detailed field-level validation errors)
+* Standardized API error response models (error codes, timestamps, metadata)
+* Authentication & authorization
+* Pagination, filtering, or sorting
+* CI/CD pipelines
+* Full end-to-end (E2E) test coverage
 
-The focus was on learning Docker, deployment, and environment configuration.
-
----
-
-## ✨ Features
-
-- RESTful API for managing expenses and incomes
-- Create, read, update, delete (CRUD) expenses
-- Supports expenses and incomes
-- PostgreSQL database (production & local)
-- Environment-based configuration using Spring Profiles
-- Dockerized setup with separate configurations for local development and production
-- Deployed to Railway
+Basic domain-level error handling is implemented via a global exception handler,
+but more advanced validation and standardized error responses were intentionally
+kept out of scope.
 
 ---
 
 ## 🛠 Tech Stack
 
-- **Java 21**
-- **Spring Boot**
-  - Spring Web
-  - Spring Data JPA
-- **PostgreSQL**
-- **Hibernate ORM (via Spring Data JPA)**
-- **Docker (including Docker Compose)**
-- **Railway** (Deployment)
+* **Java 21**
+* **Spring Boot**
+
+  * Spring Web
+  * Spring Data JPA
+* **PostgreSQL**
+* **Hibernate ORM**
+* **Docker & Docker Compose**
+* **Railway** (Deployment)
 
 ---
 
@@ -82,16 +148,30 @@ expense-tracker-backend/
 │   │   │       │   ├── model/
 │   │   │       │   │   ├── Expense.java
 │   │   │       │   │   └── ExpenseType.java
+│   │   │       │   ├── exception/
+│   │   │       │   │   └── ExpenseNotFoundException.java
 │   │   │       │   └── DataInitializer.java
 │   │   │       └── common/
 │   │   │           └── exception/
-│   │   │               └── GlobalExceptionHandler.java    # (currently empty / future use)
+│   │   │               └── GlobalExceptionHandler.java   
 │   │   └── resources/
 │   │       ├── application.properties
 │   │       ├── application-local.properties
 │   │       └── application-prod.properties
 │   └── test/
-│       └── java/                                          # (currently empty / future use)
+│       ├── java
+│       │   └── de/felixalbert/expensetracker/
+|       |       ├── expense/
+|       |           ├── controller/
+|       |           │   └── ExpenseControllerTests.java
+|       |           ├── service/
+|       |           │   └── ExpenseServiceTests.java
+|       |           ├── repository/
+|       |           |   └── ExpenseRepositoryIntegrationTests.java
+|       |           └── testdata/
+|       |               └── ExpenseTestDataBuilder.java
+|       └── resources
+|           └── application-test.yml                        
 ├── Dockerfile
 ├── docker-compose.yml
 ├── docker-compose.local.yml
@@ -106,31 +186,17 @@ Some layers are intentionally kept minimal as the focus of this project is infra
 
 ## 🔧 Configuration & Profiles
 
-The application uses **Spring Profiles** to separate environments.
+The application uses **Spring Profiles** to separate environments:
 
-### Available Profiles
+* `local` – Local development with PostgreSQL (Docker)
+* `prod` – Production environment (Railway)
+* `test` – Isolated test configuration
 
-- `local` – Local development with PostgreSQL (Docker)
-- `prod` – Production environment (Railway)
-
-### Profile Configuration Files
-
-- `application.properties` – shared defaults
-- `application-local.properties` – local development
-- `application-prod.properties` – production configuration
-
-### Activating Profiles
-
-Profiles are activated via environment variables:
-
-    SPRING_PROFILES_ACTIVE=local
-    SPRING_PROFILES_ACTIVE=prod
-
-Spring Profiles are primarily used when running the application locally via IDE or Maven, or in production (Railway). Container-based setups rely mainly on environment variables.
+Profiles are activated via environment variables and Maven/IDE configuration.
 
 ---
 
-## 🚀 Running Locally (Recommended)
+## 🚀 Running Locally
 
 ### Prerequisites
 
@@ -221,19 +287,13 @@ is provided via environment variables in `docker-compose.yml`.
 | Docker validation  | Docker Compose (this setup)   |
 | Production         | Railway                       |
 
---- 
+---
 
 ## 🌍 Deployment
 
 The backend is deployed on **Railway** using Docker and runs with the `prod` profile.
 
-Environment variables are used for all production-specific configuration:
-
-    SPRING_PROFILES_ACTIVE=prod
-    SPRING_DATASOURCE_URL=jdbc:postgresql://...
-    SPRING_DATASOURCE_USERNAME=...
-    SPRING_DATASOURCE_PASSWORD=...
-
+All production configuration is provided via environment variables.
 
 ---
 
@@ -256,25 +316,13 @@ Environment variables are used for all production-specific configuration:
 
 ---
 
-## 📌 Notes
-
-- Database schema changes are **validated** in production (ddl-auto=validate)
-
-- No test data is created in production
-
-- Configuration follows best practices for cloud-native Spring Boot applications
-
----
-
 ## 📚 Lessons Learned
 
-- Practical use of Docker for local and cloud environments
-- Understanding environment-specific configuration in Spring Boot
-- Managing application behavior via environment variables
-- Debugging containerized Spring Boot applications
-- Designing a clean separation between application code and infrastructure
-
-## 📄 License
+* Designing a clean, layered backend architecture
+* Applying pragmatic testing strategies
+* Managing environment-specific configuration
+* Debugging containerized Spring Boot applications
+* Deploying and operating a backend service in the cloud
 
 This project is for demonstration and learning purposes. 
 
