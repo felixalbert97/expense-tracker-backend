@@ -80,13 +80,13 @@ class ExpenseControllerTests {
     @Test
     void updateExpense_success_returnsUpdatedExpense() throws Exception {
         // Arrange
-        Long Id = 1L;
+        Long id = 1L;
         Expense updated = ExpenseTestDataBuilder.defaultExpense();
 
-        when(expenseService.update(eq(Id), any(Expense.class))).thenReturn(updated);
+        when(expenseService.update(eq(id), any(Expense.class))).thenReturn(updated);
 
         // Act & Assert
-        mockMvc.perform(put("/api/expenses/" + Id)
+        mockMvc.perform(put("/api/expenses/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updated)))
                .andExpect(status().isOk())
@@ -96,12 +96,12 @@ class ExpenseControllerTests {
     @Test
     void updateExpense_notFound_returns404() throws Exception {
         // Arrange
-        Long Id = 999L;
+        Long id = 999L;
         Expense updated = ExpenseTestDataBuilder.defaultExpense();
-        doThrow(new ExpenseNotFoundException(Id)).when(expenseService).update(eq(Id), any(Expense.class));
+        doThrow(new ExpenseNotFoundException(id)).when(expenseService).update(eq(id), any(Expense.class));
 
         // Act & Assert
-        mockMvc.perform(put("/api/expenses/" + Id)
+        mockMvc.perform(put("/api/expenses/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updated)))
                .andExpect(status().isNotFound());

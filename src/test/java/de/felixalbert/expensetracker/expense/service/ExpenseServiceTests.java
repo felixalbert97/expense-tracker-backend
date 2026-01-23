@@ -35,11 +35,14 @@ class ExpenseServiceTests {
 
     @Test
     void findAll_returnsAllExpenses() {
+        //Arrange
         List<Expense> expenses = ExpenseTestDataBuilder.defaultExpenses();
         when(expenseRepository.findAll()).thenReturn(expenses);
 
+        //Act
         List<Expense> result = expenseService.findAll();
 
+        //Assert
         assertThat(result).isEqualTo(expenses);
         verify(expenseRepository).findAll();
     }
@@ -48,11 +51,14 @@ class ExpenseServiceTests {
 
     @Test
     void create_savesAndReturnsExpense() {
+        //Arrange
         Expense expense = ExpenseTestDataBuilder.defaultExpense();
         when(expenseRepository.save(expense)).thenReturn(expense);
-
+        
+        //Act
         Expense result = expenseService.create(expense);
 
+        //Assert
         assertThat(result).isEqualTo(expense);
         verify(expenseRepository).save(expense);
     }
@@ -61,9 +67,11 @@ class ExpenseServiceTests {
 
     @Test
     void deleteById_existingId_deletesExpense() {
+        //Arrange
         Long id = 1L;
         when(expenseRepository.existsById(id)).thenReturn(true);
 
+        //Act & Assert
         assertDoesNotThrow(() -> expenseService.deleteById(id));
         verify(expenseRepository).existsById(id);
         verify(expenseRepository).deleteById(id);
@@ -71,14 +79,17 @@ class ExpenseServiceTests {
 
     @Test
     void deleteById_nonExistingId_throwsException() {
+        //Arrange
         Long id = 999L;
         when(expenseRepository.existsById(id)).thenReturn(false);
 
+        //Act
         ExpenseNotFoundException ex = assertThrows(
                 ExpenseNotFoundException.class,
                 () -> expenseService.deleteById(id)
         );
 
+        //Assert
         assertEquals(id, ex.getExpenseId());
         verify(expenseRepository, never()).deleteById(anyLong());
     }
@@ -87,17 +98,19 @@ class ExpenseServiceTests {
 
     @Test
     void update_existingExpense_updatesAndReturnsExpense() {
+        //Arrange
         Long id = 1L;
         Expense existing = ExpenseTestDataBuilder.defaultExpense();
         Expense updated = ExpenseTestDataBuilder.anExpense()
                 .withCategory("Updated")
                 .build();
-
         when(expenseRepository.findById(id)).thenReturn(Optional.of(existing));
         when(expenseRepository.save(existing)).thenReturn(existing);
 
+        //Act
         Expense result = expenseService.update(id, updated);
 
+        //Assert
         assertThat(result.getCategory()).isEqualTo(updated.getCategory());
         verify(expenseRepository).findById(id);
         verify(expenseRepository).save(existing);
@@ -105,16 +118,16 @@ class ExpenseServiceTests {
 
     @Test
     void update_nonExistingExpense_throwsException() {
+        //Arrange
         Long id = 99L;
         Expense updated = ExpenseTestDataBuilder.defaultExpense();
-
         when(expenseRepository.findById(id)).thenReturn(Optional.empty());
 
+        //Act & Assert
         ExpenseNotFoundException ex = assertThrows(
                 ExpenseNotFoundException.class,
                 () -> expenseService.update(id, updated)
         );
-
         assertEquals(id, ex.getExpenseId());
         verify(expenseRepository).findById(id);
         verify(expenseRepository, never()).save(any());

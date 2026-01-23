@@ -42,7 +42,4 @@ public class ExpenseController {
         expenseService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
-
-    
 }
