@@ -29,8 +29,9 @@ The focus of this project is **architecture, testability, and deployment**, not 
 
 * RESTful API for managing expenses and incomes
 * CRUD operations for expenses
-* Centralized exception handling via a global exception handler
 * Layered architecture (controller, service, repository)
+* Bean validation on API boundaries (Jakarta Validation)
+* Centralized exception handling via a global exception handler
 * Environment-based configuration using Spring Profiles
 * PostgreSQL database (local & production)
 * Dockerized setup for local development and production
@@ -100,7 +101,6 @@ This approach provides a good balance between:
 
 The following aspects were intentionally kept minimal or are not included:
 
-* Comprehensive input validation (detailed field-level validation errors)
 * Standardized API error response models (error codes, timestamps, metadata)
 * Authentication & authorization
 * Pagination, filtering, or sorting

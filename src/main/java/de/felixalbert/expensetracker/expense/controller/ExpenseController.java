@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import de.felixalbert.expensetracker.expense.model.Expense;
 import de.felixalbert.expensetracker.expense.service.ExpenseService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/expenses")
@@ -25,7 +26,7 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public ResponseEntity<Expense> createExpense(@RequestBody Expense expense) {
+    public ResponseEntity<Expense> createExpense(@Valid @RequestBody Expense expense) {
         Expense created = expenseService.create(expense);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
@@ -33,7 +34,7 @@ public class ExpenseController {
     @PutMapping("/{id}")
     public ResponseEntity<Expense> updateExpense(
             @PathVariable Long id,
-            @RequestBody Expense updatedExpense) {
+            @Valid @RequestBody Expense updatedExpense) {
         return ResponseEntity.ok(expenseService.update(id, updatedExpense));
     }
 

@@ -1,6 +1,7 @@
 package de.felixalbert.expensetracker.expense.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -11,15 +12,22 @@ public class Expense {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Amount must not be null")
+    @Positive(message = "Amount must be greater than 0")
     private BigDecimal amount;
 
+    @Size(max = 100, message = "Category must not exceed 100 characters")
     private String category;
 
+    @NotNull(message = "Date must not be null")
+    @PastOrPresent(message = "Date cannot be in the future")
     private LocalDate date;
 
+    @Size(max = 255, message = "Description must not exceed 255 characters")
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "Expense type must not be null")
     private ExpenseType type;
 
     protected Expense() {
