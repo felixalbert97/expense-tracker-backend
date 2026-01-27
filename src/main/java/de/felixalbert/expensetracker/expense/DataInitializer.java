@@ -3,6 +3,7 @@ package de.felixalbert.expensetracker.expense;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import de.felixalbert.expensetracker.expense.model.Expense;
 import de.felixalbert.expensetracker.expense.model.ExpenseType;
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Configuration
+@Profile("local")
 public class DataInitializer {
 
     @Bean
@@ -27,7 +29,7 @@ public class DataInitializer {
                 ));
 
                 repository.save(new Expense(
-                        new BigDecimal("2000.00"),
+                        new BigDecimal("3000.00"),
                         "Salary",
                         LocalDate.now(),
                         "Monthly salary",
