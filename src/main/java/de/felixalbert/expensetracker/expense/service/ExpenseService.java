@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import de.felixalbert.expensetracker.expense.exception.ExpenseNotFoundException;
 import de.felixalbert.expensetracker.expense.model.Expense;
 import de.felixalbert.expensetracker.expense.repository.ExpenseRepository;
+import de.felixalbert.expensetracker.user.exception.UserNotFoundException;
 import de.felixalbert.expensetracker.user.model.User;
 import de.felixalbert.expensetracker.user.repository.UserRepository;
 
@@ -33,7 +34,7 @@ public class ExpenseService {
 
     public Expense create(Expense expense, Long userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new IllegalStateException("User not found"));
+            .orElseThrow(() -> new UserNotFoundException(userId));
 
         expense.setUser(user);
         return expenseRepository.save(expense);
@@ -45,13 +46,13 @@ public class ExpenseService {
     }
 
     public Expense update(Long id, Long userId, Expense updatedExpense) {
-    Expense expense = getById(id, userId);
+        Expense expense = getById(id, userId);
 
-    expense.setAmount(updatedExpense.getAmount());
-    expense.setCategory(updatedExpense.getCategory());
-    expense.setDate(updatedExpense.getDate());
-    expense.setDescription(updatedExpense.getDescription());
-    expense.setType(updatedExpense.getType());
+        expense.setAmount(updatedExpense.getAmount());
+        expense.setCategory(updatedExpense.getCategory());
+        expense.setDate(updatedExpense.getDate());
+        expense.setDescription(updatedExpense.getDescription());
+        expense.setType(updatedExpense.getType());
 
     return expenseRepository.save(expense);
 }
