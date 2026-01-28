@@ -52,6 +52,21 @@ public class Expense {
         this.type = type;
     }
 
+    // ONLY for tests (package-private)
+    Expense(Long id,
+            BigDecimal amount,
+            String category,
+            LocalDate date,
+            String description,
+            ExpenseType type) {
+        this.id = id;
+        this.amount = amount;
+        this.category = category;
+        this.date = date;
+        this.description = description;
+        this.type = type;
+    }
+
     // Getter 
     public Long getId() {
         return id;
