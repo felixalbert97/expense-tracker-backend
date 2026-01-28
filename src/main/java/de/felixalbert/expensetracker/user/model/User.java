@@ -36,6 +36,14 @@ public class User {
         this.createdAt = Instant.now();
     }
 
+    // ONLY for tests (package-private)
+    User(Long id, String email, String passwordHash) {
+        this.id = id;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.createdAt = Instant.now();
+    }
+
     public Long getId() {
         return id;
     }
