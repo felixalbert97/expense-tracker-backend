@@ -7,34 +7,45 @@ import org.springframework.stereotype.Service;
 import de.felixalbert.expensetracker.expense.exception.ExpenseNotFoundException;
 import de.felixalbert.expensetracker.expense.model.Expense;
 import de.felixalbert.expensetracker.expense.repository.ExpenseRepository;
+import de.felixalbert.expensetracker.user.model.User;
+import de.felixalbert.expensetracker.user.repository.UserRepository;
 
 @Service
 public class ExpenseService {
 
     private final ExpenseRepository expenseRepository;
+    private final UserRepository userRepository;
 
-    public ExpenseService(ExpenseRepository expenseRepository) {
+    public ExpenseService(ExpenseRepository expenseRepository, UserRepository userRepository) {
         this.expenseRepository = expenseRepository;
+        this.userRepository = userRepository;
     }
 
-    public List<Expense> findAll() {
-        return expenseRepository.findAll();
+    public Expense getById(Long id, Long userId){
+        return expenseRepository
+            .findByIdAndUserId(id, userId)
+            .orElseThrow(() -> new ExpenseNotFoundException(id));
     }
 
-    public Expense create(Expense expense) {
+    public List<Expense> getAll(Long userId) {
+        return expenseRepository.findAllByUserId(userId);
+    }
+
+    public Expense create(Expense expense, Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalStateException("User not found"));
+
+        expense.setUser(user);
         return expenseRepository.save(expense);
     }
 
-    public void deleteById(Long id) {
-        if (!expenseRepository.existsById(id)) {
-            throw new ExpenseNotFoundException(id);
-        }
-        expenseRepository.deleteById(id);
+    public void deleteById(Long id, Long userId) {
+        Expense existing = getById(id, userId);
+        expenseRepository.delete(existing);
     }
 
-    public Expense update(Long id, Expense updatedExpense) {
-    Expense expense = expenseRepository.findById(id)
-        .orElseThrow(() -> new ExpenseNotFoundException(id));
+    public Expense update(Long id, Long userId, Expense updatedExpense) {
+    Expense expense = getById(id, userId);
 
     expense.setAmount(updatedExpense.getAmount());
     expense.setCategory(updatedExpense.getCategory());
