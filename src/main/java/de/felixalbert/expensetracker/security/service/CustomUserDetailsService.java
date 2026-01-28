@@ -1,10 +1,11 @@
-package de.felixalbert.expensetracker.user.service;
+package de.felixalbert.expensetracker.security.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import de.felixalbert.expensetracker.security.model.CustomUserDetails;
 import de.felixalbert.expensetracker.user.model.User;
 import de.felixalbert.expensetracker.user.repository.UserRepository;
 
@@ -26,10 +27,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 new UsernameNotFoundException("User not found")
             );
 
-        return org.springframework.security.core.userdetails.User
-            .withUsername(user.getEmail())
-            .password(user.getPasswordHash())
-            .authorities("USER")
-            .build();
+        return new CustomUserDetails(user);
     }
 }

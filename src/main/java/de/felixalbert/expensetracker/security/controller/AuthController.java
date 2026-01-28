@@ -1,4 +1,4 @@
-package de.felixalbert.expensetracker.user.controller;
+package de.felixalbert.expensetracker.security.controller;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.felixalbert.expensetracker.security.service.JwtService;
 import de.felixalbert.expensetracker.user.model.LoginRequest;
 import de.felixalbert.expensetracker.user.model.LoginResponse;
-import de.felixalbert.expensetracker.user.service.JwtService;
 
 @RestController
 @RequestMapping("/auth")

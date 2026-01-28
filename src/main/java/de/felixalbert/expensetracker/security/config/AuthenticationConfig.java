@@ -1,4 +1,4 @@
-package de.felixalbert.expensetracker.config;
+package de.felixalbert.expensetracker.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
