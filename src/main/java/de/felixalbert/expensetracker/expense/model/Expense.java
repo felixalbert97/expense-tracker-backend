@@ -5,6 +5,8 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import de.felixalbert.expensetracker.user.model.User;
+
 @Entity
 public class Expense {
 
@@ -30,11 +32,19 @@ public class Expense {
     @NotNull(message = "Expense type must not be null")
     private ExpenseType type;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     protected Expense() {
         // JPA braucht einen parameterlosen Konstruktor
     }
 
-    public Expense(BigDecimal amount, String category, LocalDate date, String description, ExpenseType type) {
+    public Expense(BigDecimal amount,
+                    String category,
+                    LocalDate date,
+                    String description,
+                    ExpenseType type) {
         this.amount = amount;
         this.category = category;
         this.date = date;
@@ -67,6 +77,10 @@ public class Expense {
         return type;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     // Setter 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
@@ -86,5 +100,9 @@ public class Expense {
 
     public void setType(ExpenseType type) {
         this.type = type;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
