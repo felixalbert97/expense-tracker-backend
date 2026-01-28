@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import de.felixalbert.expensetracker.expense.exception.ExpenseNotFoundException;
+import de.felixalbert.expensetracker.user.exception.UserNotFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -23,6 +24,16 @@ public class GlobalExceptionHandler {
         Map<String, String> error = new HashMap<>();
         error.put("error", "Expense not found");
         error.put("id", String.valueOf(ex.getExpenseId()));
+        return error;
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public Map<String, String> handleUserNotFound(UserNotFoundException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "User not found");
+        error.put("id", String.valueOf(ex.getUserId()));
         return error;
     }
 
