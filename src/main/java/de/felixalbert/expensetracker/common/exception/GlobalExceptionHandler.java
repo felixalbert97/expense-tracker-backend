@@ -5,59 +5,88 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import de.felixalbert.expensetracker.expense.exception.ExpenseNotFoundException;
 import de.felixalbert.expensetracker.user.exception.UserNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+
+
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiError> handleBadCredentials(
+        BadCredentialsException ex,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(ApiError.of(
+                HttpStatus.UNAUTHORIZED,
+                "BAD_CREDENTIALS",
+                "Invalid email or password",
+                request
+            ));
+    }
+
     @ExceptionHandler(ExpenseNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public Map<String, String> handleExpenseNotFound(ExpenseNotFoundException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Expense not found");
-        error.put("id", String.valueOf(ex.getExpenseId()));
-        return error;
+    public ResponseEntity<ApiError> handleExpenseNotFound(
+        ExpenseNotFoundException ex,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ApiError.of(
+                HttpStatus.NOT_FOUND,
+                "EXPENSE_NOT_FOUND",
+                "Expense not found",
+                request
+            ));
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ResponseBody
-    public Map<String, String> handleUserNotFound(UserNotFoundException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "User not found");
-        error.put("id", String.valueOf(ex.getUserId()));
-        return error;
+    public ResponseEntity<ApiError> handleUserNotFound(
+        UserNotFoundException ex,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ApiError.of(
+                HttpStatus.NOT_FOUND,
+                "USER_NOT_FOUND",
+                "User not found",
+                request
+            ));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationErrors(
-            MethodArgumentNotValidException ex) {
-
-        Map<String, String> errors = new HashMap<>();
-
+    public ResponseEntity<ApiError> handleValidationErrors(
+        MethodArgumentNotValidException ex,
+        HttpServletRequest request
+    ) {
+        Map<String, String> fieldErrors = new HashMap<>();
         ex.getBindingResult().getFieldErrors()
-            .forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
+            .forEach(err ->
+                fieldErrors.put(err.getField(), err.getDefaultMessage())
             );
 
-        return ResponseEntity.badRequest().body(errors);
+        return ResponseEntity.badRequest()
+            .body(ApiError.validation(request, fieldErrors));
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public Map<String, String> handleGeneric(Exception ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Internal server error");
-        error.put("message", ex.getMessage());
-        return error;
+    public ResponseEntity<ApiError> handleGeneric(
+        Exception ex,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ApiError.of(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "INTERNAL_ERROR",
+                "Internal server error",
+                request
+            ));
     }
 }

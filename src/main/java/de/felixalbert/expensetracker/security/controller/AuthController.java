@@ -1,12 +1,8 @@
 package de.felixalbert.expensetracker.security.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,25 +47,18 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public LoginResponse login(@RequestBody LoginRequest request) {
 
-        try {
-            Authentication auth = authenticationManager.authenticate(
+        Authentication authentication =
+            authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                     request.email(),
                     request.password()
                 )
             );
 
-            String token = jwtService.generateToken(auth);
-            return ResponseEntity.ok(new LoginResponse(token));
+        String token = jwtService.generateToken(authentication);
 
-        } catch (BadCredentialsException ex) {
-            Map<String, String> error = new HashMap<>();
-            error.put("message", "Invalid email or password");
-            return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(error);
-        }
+        return new LoginResponse(token);
     }
 }
