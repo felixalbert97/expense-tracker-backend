@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import de.felixalbert.expensetracker.expense.exception.ExpenseNotFoundException;
+import de.felixalbert.expensetracker.user.exception.UserAlreadyInUseException;
 import de.felixalbert.expensetracker.user.exception.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -18,6 +19,20 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UserAlreadyInUseException.class)
+    public ResponseEntity<ApiError> handleUserAlreadyInUse(
+        UserAlreadyInUseException ex,
+        HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(ApiError.of(
+                HttpStatus.CONFLICT,
+                "USER_ALREADY_IN_USE_EXCEPTION",
+                ex.getMessage(),
+                request
+            ));
+    }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiError> handleBadCredentials(
@@ -42,7 +57,7 @@ public class GlobalExceptionHandler {
             .body(ApiError.of(
                 HttpStatus.NOT_FOUND,
                 "EXPENSE_NOT_FOUND",
-                "Expense not found",
+                ex.getMessage(),
                 request
             ));
     }
@@ -56,7 +71,7 @@ public class GlobalExceptionHandler {
             .body(ApiError.of(
                 HttpStatus.NOT_FOUND,
                 "USER_NOT_FOUND",
-                "User not found",
+                ex.getMessage(),
                 request
             ));
     }

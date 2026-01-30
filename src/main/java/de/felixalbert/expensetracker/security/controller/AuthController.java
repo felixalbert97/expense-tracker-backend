@@ -14,6 +14,7 @@ import de.felixalbert.expensetracker.security.service.JwtService;
 import de.felixalbert.expensetracker.user.model.LoginRequest;
 import de.felixalbert.expensetracker.user.model.LoginResponse;
 import de.felixalbert.expensetracker.user.model.RegisterRequest;
+import de.felixalbert.expensetracker.user.model.RegisterResponse;
 import de.felixalbert.expensetracker.user.service.UserService;
 
 @RestController
@@ -35,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(
+    public ResponseEntity<RegisterResponse> register(
             @RequestBody RegisterRequest request) {
 
         userService.createUser(
@@ -43,11 +44,11 @@ public class AuthController {
             request.password()
         );
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse(request.email()));
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
 
         Authentication authentication =
             authenticationManager.authenticate(
@@ -59,6 +60,6 @@ public class AuthController {
 
         String token = jwtService.generateToken(authentication);
 
-        return new LoginResponse(token);
+        return ResponseEntity.ok(new LoginResponse(token));
     }
 }

@@ -3,6 +3,7 @@ package de.felixalbert.expensetracker.user.service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import de.felixalbert.expensetracker.user.exception.UserAlreadyInUseException;
 import de.felixalbert.expensetracker.user.model.User;
 import de.felixalbert.expensetracker.user.repository.UserRepository;
 
@@ -21,7 +22,7 @@ public class UserService {
     public User createUser(String email, String rawPassword) {
 
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Email already in use");
+            throw new UserAlreadyInUseException();
         }
 
         String passwordHash = passwordEncoder.encode(rawPassword);
