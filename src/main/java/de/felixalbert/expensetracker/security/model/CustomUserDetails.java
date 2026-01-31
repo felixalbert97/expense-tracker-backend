@@ -44,7 +44,7 @@ public class CustomUserDetails implements UserDetails {
         return authorities;
     }
 
-    // Boilerplate – always true from now on
+    // No account policy (yet) – always true from now on
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }

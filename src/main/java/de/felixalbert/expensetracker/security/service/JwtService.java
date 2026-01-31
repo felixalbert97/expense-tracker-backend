@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import de.felixalbert.expensetracker.user.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -20,8 +21,16 @@ public class JwtService {
         1000 * 60 * 60; // 1h
 
     public String generateToken(Authentication authentication) {
+        return generateToken(authentication.getName());
+    }
+
+    public String generateToken(User user) {
+        return generateToken(user.getEmail());
+    }
+
+    public String generateToken(String userName) {
         return Jwts.builder()
-            .setSubject(authentication.getName())
+            .setSubject(userName)
             .setIssuedAt(new Date())
             .setExpiration(
                 new Date(System.currentTimeMillis() + EXPIRATION_MS)

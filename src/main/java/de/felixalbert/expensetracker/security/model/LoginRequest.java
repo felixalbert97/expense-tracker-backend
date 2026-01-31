@@ -1,4 +1,4 @@
-package de.felixalbert.expensetracker.user.model;
+package de.felixalbert.expensetracker.security.model;
 
 public record LoginRequest(
     String email,

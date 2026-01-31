@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import de.felixalbert.expensetracker.expense.exception.ExpenseNotFoundException;
+import de.felixalbert.expensetracker.security.exception.InvalidRefreshTokenException;
+import de.felixalbert.expensetracker.security.exception.RefreshTokenExpiredException;
 import de.felixalbert.expensetracker.user.exception.UserAlreadyInUseException;
 import de.felixalbert.expensetracker.user.exception.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -89,6 +91,32 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest()
             .body(ApiError.validation(request, fieldErrors));
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<ApiError> handleInvalidRefresh(
+        HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(ApiError.of(
+                HttpStatus.UNAUTHORIZED,
+                "INVALID_REFRESH_TOKEN",
+                "Invalid refresh token",
+                request
+            ));
+    }
+
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    public ResponseEntity<ApiError> handleExpiredRefresh(
+        HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            .body(ApiError.of(
+                HttpStatus.UNAUTHORIZED,
+                "REFRESH_EXPIRED",
+                "Session expired. Please log in again.",
+                request
+            ));
     }
 
     @ExceptionHandler(Exception.class)

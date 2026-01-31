@@ -4,6 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import de.felixalbert.expensetracker.user.exception.UserAlreadyInUseException;
+import de.felixalbert.expensetracker.user.exception.UserNotFoundException;
 import de.felixalbert.expensetracker.user.model.User;
 import de.felixalbert.expensetracker.user.repository.UserRepository;
 
@@ -17,6 +18,11 @@ public class UserService {
                        BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public User getById(Long id){
+        return userRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException(id));
     }
 
     public User createUser(String email, String rawPassword) {

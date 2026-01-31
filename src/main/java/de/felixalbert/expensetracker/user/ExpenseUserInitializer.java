@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Profile;
 import de.felixalbert.expensetracker.expense.model.Expense;
 import de.felixalbert.expensetracker.expense.model.ExpenseType;
 import de.felixalbert.expensetracker.expense.repository.ExpenseRepository;
+import de.felixalbert.expensetracker.security.repository.RefreshTokenRepository;
 import de.felixalbert.expensetracker.user.model.User;
 import de.felixalbert.expensetracker.user.repository.UserRepository;
 import de.felixalbert.expensetracker.user.service.UserService;
@@ -20,8 +21,14 @@ import de.felixalbert.expensetracker.user.service.UserService;
 public class ExpenseUserInitializer {
 
     @Bean
-    CommandLineRunner initTestUserWithExpenses(UserService userService, UserRepository userRepository, ExpenseRepository expenseRepository) { 
+    CommandLineRunner initTestUserWithExpenses(
+        UserService userService,
+        UserRepository userRepository,
+        ExpenseRepository expenseRepository,
+        RefreshTokenRepository refreshTokenRepository
+        ) { 
         return args -> {
+            refreshTokenRepository.deleteAll();
             expenseRepository.deleteAll();
             userRepository.deleteAll();
             User testUser1 = userService.createUser("test@test.de", "password123");
