@@ -1,9 +1,10 @@
 package de.felixalbert.expensetracker.security.service;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import de.felixalbert.expensetracker.security.exception.InvalidRefreshTokenException;
@@ -12,22 +13,29 @@ import de.felixalbert.expensetracker.security.model.RefreshToken;
 import de.felixalbert.expensetracker.security.repository.RefreshTokenRepository;
 import de.felixalbert.expensetracker.user.model.User;
 
+
 @Service
 public class RefreshTokenService {
 
     private final RefreshTokenRepository repository;
 
-    public RefreshTokenService(RefreshTokenRepository repository) {
+    private final Duration refreshTokenExpiration;
+
+    public RefreshTokenService(
+        RefreshTokenRepository repository,
+        @Value("${auth.refresh-token-expiration}") Duration refreshTokenExpiration
+    ) {
+        this.refreshTokenExpiration = refreshTokenExpiration;
         this.repository = repository;
     }
 
     public RefreshToken create(User user) {
+        Instant now = Instant.now();
+
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setToken(UUID.randomUUID().toString());
-        refreshToken.setExpiresAt(
-            Instant.now().plus(30, ChronoUnit.DAYS)
-        );
+        refreshToken.setExpiresAt(now.plus(refreshTokenExpiration));
         refreshToken.setRevoked(false);
 
         return repository.save(refreshToken);
@@ -60,10 +68,11 @@ public class RefreshTokenService {
         oldToken.setRevoked(true);
         repository.save(oldToken);
 
+        Instant now = Instant.now();
         RefreshToken newToken = new RefreshToken();
         newToken.setUser(oldToken.getUser());
         newToken.setToken(UUID.randomUUID().toString());
-        newToken.setExpiresAt(Instant.now().plus(30, ChronoUnit.DAYS));
+        newToken.setExpiresAt(now.plus(refreshTokenExpiration));
 
         return repository.save(newToken);
     }

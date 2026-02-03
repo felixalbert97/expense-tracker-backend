@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import java.time.Duration;
 import java.util.List;
 
 import tools.jackson.databind.ObjectMapper ;
@@ -39,7 +40,7 @@ class ExpenseControllerTests {
     private ExpenseService expenseService;
 
     @MockitoBean
-    private final JwtService jwtService = new JwtService();
+    private final JwtService jwtService = new JwtService("secret", Duration.ofSeconds(1L));
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 

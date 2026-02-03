@@ -1,7 +1,12 @@
 package de.felixalbert.expensetracker.security.service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -14,11 +19,18 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    private static final String SECRET =
-        "super-secret-key-change-me-but-i-must-be-veeeeery-loooong";
+    private final Key signingKey;
+    private final Duration accessTokenExpiration;
 
-    private static final long EXPIRATION_MS =
-        1000 * 60 * 60; // 1h
+    public JwtService(
+        @Value("${jwt.secret}") String secret,
+        @Value("${jwt.access-token-expiration}") Duration accessTokenExpiration
+    ) {
+        this.signingKey = Keys.hmacShaKeyFor(
+            secret.getBytes(StandardCharsets.UTF_8)
+        );
+        this.accessTokenExpiration = accessTokenExpiration;
+    }
 
     public String generateToken(Authentication authentication) {
         return generateToken(authentication.getName());
@@ -28,14 +40,16 @@ public class JwtService {
         return generateToken(user.getEmail());
     }
 
-    public String generateToken(String userName) {
+    public String generateToken(String username) {
+        Instant now = Instant.now();
+
         return Jwts.builder()
-            .setSubject(userName)
-            .setIssuedAt(new Date())
+            .setSubject(username)
+            .setIssuedAt(Date.from(now))
             .setExpiration(
-                new Date(System.currentTimeMillis() + EXPIRATION_MS)
+                Date.from(now.plus(accessTokenExpiration))
             )
-            .signWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
+            .signWith(signingKey)
             .compact();
     }
 
@@ -57,7 +71,7 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(Keys.hmacShaKeyFor(SECRET.getBytes()))
+            .setSigningKey(signingKey)
             .build()
             .parseClaimsJws(token)
             .getBody();
