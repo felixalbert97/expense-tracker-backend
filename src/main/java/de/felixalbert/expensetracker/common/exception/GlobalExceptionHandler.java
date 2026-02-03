@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
             .body(ApiError.of(
                 HttpStatus.UNAUTHORIZED,
                 "BAD_CREDENTIALS",
-                "Invalid email or password",
+                "Invalid email or password.",
                 request
             ));
     }
@@ -101,7 +101,7 @@ public class GlobalExceptionHandler {
             .body(ApiError.of(
                 HttpStatus.UNAUTHORIZED,
                 "INVALID_REFRESH_TOKEN",
-                "Invalid refresh token",
+                "Invalid refresh token.",
                 request
             ));
     }
