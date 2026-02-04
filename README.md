@@ -178,12 +178,12 @@ expense-tracker-backend/
 │   │   │       │   │   └── PasswordConfig.java
 │   │   │       │   ├── filter/
 │   │   │       │   │   └── JwtAuthenticationFilter.java
+│   │   │       │   ├── controller/
+│   │   │       │   │   └── AuthController.java
 │   │   │       │   ├── service/
 │   │   │       │   │   ├── JwtService.java
 │   │   │       │   │   ├── RefreshTokenService.java
 │   │   │       │   │   └── CustomUserDetailsService.java
-│   │   │       │   ├── controller/
-│   │   │       │   │   └── AuthController.java
 │   │   │       │   ├── model/
 │   │   │       │   │   ├── LoginRequest.java
 │   │   │       │   │   ├── RegisterRequest.java
@@ -196,10 +196,10 @@ expense-tracker-backend/
 │   │   │       ├── user/
 │   │   │       │   ├── model/
 │   │   │       │   │   └── User.java
-│   │   │       │   ├── repository/
-│   │   │       │   │   └── UserRepository.java
 │   │   │       │   ├── service/
 │   │   │       │   │   └── UserService.java
+│   │   │       │   ├── repository/
+│   │   │       │   │   └── UserRepository.java
 │   │   │       │   ├── exception/
 │   │   │       │   │   ├── UserAlreadyInUseException.java
 │   │   │       │   │   └── UserNotFoundException.java
