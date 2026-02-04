@@ -5,7 +5,7 @@ Backend service for an Expense Tracker application built with **Spring Boot**.
 The application exposes a REST API for managing expenses and incomes and is designed
 to run **locally, containerized, and in the cloud**.
 
-**Key focus:** backend architecture, testing strategy, and production-ready configuration.
+**Key focus:** backend architecture, user management & security, testing strategy, and production-ready configuration.
 
 ---
 
@@ -15,13 +15,14 @@ The main goal of this project was to gain hands-on experience with **professiona
 
 * Designing a clean REST API with centralized exception handling
 * Applying a layered testing strategy (unit, web, persistence)
-* Environment-based configuration using Spring Profiles
+* Implementing basic user management and authentication (JWT access + refresh tokens)
+* Environment-specific configuration using Spring Profiles
 * Containerizing a Spring Boot application with Docker
 * Running PostgreSQL locally and in production
 * Deploying a containerized backend to the cloud (Railway)
 * Connecting a deployed backend to a separate frontend (Vercel)
 
-The focus of this project is **architecture, testability, and deployment**, not feature completeness.
+The focus of this project is **architecture, testability, security, and deployment**, not feature completeness.
 
 ---
 
@@ -30,8 +31,9 @@ The focus of this project is **architecture, testability, and deployment**, not 
 * RESTful API for managing expenses and incomes
 * CRUD operations for expenses
 * Layered architecture (controller, service, repository)
+* User registration and authentication (JWT + refresh tokens)
 * Bean validation on API boundaries (Jakarta Validation)
-* Centralized exception handling via a global exception handler
+* Centralized exception handling via a global exception handler using standardized API error response models
 * Environment-based configuration using Spring Profiles
 * PostgreSQL database (local & production)
 * Dockerized setup for local development and production
@@ -39,7 +41,20 @@ The focus of this project is **architecture, testability, and deployment**, not 
 
 ---
 
-## 🧪 Testing Strategy (Key Highlight)
+## 🔐 User Management & Security
+
+The backend implements **basic user management and authentication**:
+
+* User registration with validation and unique username/email
+* Login with JWT access tokens and refresh tokens
+* Secure password storage using BCrypt
+* Token validation via JWT filter
+* Refresh token expiration and invalidation logic
+* Exception handling for authentication errors
+
+---
+
+## 🧪 Testing Strategy 
 
 This project follows a **layered testing approach** to ensure fast feedback,
 clear responsibilities per test type, and long-term maintainability.
@@ -101,15 +116,16 @@ This approach provides a good balance between:
 
 The following aspects were intentionally kept minimal or are not included:
 
-* Standardized API error response models (error codes, timestamps, metadata)
-* Authentication & authorization
-* Pagination, filtering, or sorting
+* Advanced authentication/authorization flows (e.g., roles, permissions, OAuth)
+* Pagination, filtering, or sorting for API endpoints
 * CI/CD pipelines
 * Full end-to-end (E2E) test coverage
 
-Basic domain-level error handling is implemented via a global exception handler,
-but more advanced validation and standardized error responses were intentionally
-kept out of scope.
+What **is implemented**:
+
+* Basic user registration and JWT-based login with refresh tokens
+* Secure password storage with BCrypt
+* Token expiration and invalidation handling
 
 ---
 
@@ -118,12 +134,17 @@ kept out of scope.
 * **Java 21**
 * **Spring Boot**
 
-  * Spring Web
-  * Spring Data JPA
-* **PostgreSQL**
-* **Hibernate ORM**
-* **Docker & Docker Compose**
-* **Railway** (Deployment)
+  * Spring Web (REST API)
+  * Spring Data JPA (Persistence Layer)
+  * Spring Security (User management, JWT authentication)
+* **PostgreSQL** (local & production)
+* **Hibernate ORM** (JPA provider)
+* **H2** (in-memory test database)
+* **Docker & Docker Compose** (local dev + production-like setups)
+* **JUnit 5 & Mockito** (unit & integration testing)
+* **Railway** (production deployment)
+* **Jakarta Validation / Bean Validation** (API-level validation)
+* **BCrypt** (secure password hashing)
 
 ---
 
@@ -148,35 +169,75 @@ expense-tracker-backend/
 │   │   │       │   ├── model/
 │   │   │       │   │   ├── Expense.java
 │   │   │       │   │   └── ExpenseType.java
+│   │   │       │   └── exception/
+│   │   │       │       └── ExpenseNotFoundException.java
+│   │   │       ├── security/
+│   │   │       │   ├── config/
+│   │   │       │   │   ├── SecurityConfig.java
+│   │   │       │   │   ├── AuthenticationConfig.java
+│   │   │       │   │   └── PasswordConfig.java
+│   │   │       │   ├── filter/
+│   │   │       │   │   └── JwtAuthenticationFilter.java
+│   │   │       │   ├── service/
+│   │   │       │   │   ├── JwtService.java
+│   │   │       │   │   ├── RefreshTokenService.java
+│   │   │       │   │   └── CustomUserDetailsService.java
+│   │   │       │   ├── controller/
+│   │   │       │   │   └── AuthController.java
+│   │   │       │   ├── model/
+│   │   │       │   │   ├── LoginRequest.java
+│   │   │       │   │   ├── RegisterRequest.java
+│   │   │       │   │   ├── RegisterResponse.java
+│   │   │       │   │   ├── AuthResponse.java
+│   │   │       │   │   └── RefreshToken.java
+│   │   │       │   └── exception/
+│   │   │       │       ├── InvalidRefreshTokenException.java
+│   │   │       │       └── RefreshTokenExpiredException.java
+│   │   │       ├── user/
+│   │   │       │   ├── model/
+│   │   │       │   │   └── User.java
+│   │   │       │   ├── repository/
+│   │   │       │   │   └── UserRepository.java
+│   │   │       │   ├── service/
+│   │   │       │   │   └── UserService.java
 │   │   │       │   ├── exception/
-│   │   │       │   │   └── ExpenseNotFoundException.java
-│   │   │       │   └── DataInitializer.java
+│   │   │       │   │   ├── UserAlreadyInUseException.java
+│   │   │       │   │   └── UserNotFoundException.java
+│   │   │       │   └── ExpenseUserInitializer.java
 │   │   │       └── common/
 │   │   │           └── exception/
-│   │   │               └── GlobalExceptionHandler.java   
+│   │   │               └── GlobalExceptionHandler.java
 │   │   └── resources/
 │   │       ├── application.properties
 │   │       ├── application-local.properties
 │   │       └── application-prod.properties
 │   └── test/
-│       ├── java
+│       ├── java/
 │       │   └── de/felixalbert/expensetracker/
-|       |       ├── expense/
-|       |           ├── controller/
-|       |           │   └── ExpenseControllerTests.java
-|       |           ├── service/
-|       |           │   └── ExpenseServiceTests.java
-|       |           ├── repository/
-|       |           |   └── ExpenseRepositoryIntegrationTests.java
-|       |           └── testdata/
-|       |               └── ExpenseTestDataBuilder.java
-|       └── resources
-|           └── application-test.yml                        
+│       │       ├── ExpenseTrackerApplicationTests.java
+│       │       ├── expense/
+│       │       │   ├── controller/
+│       │       │   │   └── ExpenseControllerTests.java
+│       │       │   ├── service/
+│       │       │   │   └── ExpenseServiceTests.java
+│       │       │   ├── repository/
+│       │       │   │   └── ExpenseRepositoryIntegrationTests.java
+│       │       │   └── model/
+│       │       │       └── ExpenseTestDataBuilder.java
+│       │       └── user/
+│       │           ├── repository/
+│       │           │   └── UserRepositoryIntegrationTests.java
+│       │           └── model/
+│       │               └── UserTestDataBuilder.java
+│       └── resources/
+│           ├── application-test.yml
+│           └── application-jpa-test.yml
 ├── Dockerfile
 ├── docker-compose.yml
 ├── docker-compose.local.yml
 ├── README.md
 └── .gitignore
+
 ```
 
 The backend follows a layered architecture (controller, service, repository, model) to ensure clear separation of concerns and scalability.
@@ -191,6 +252,7 @@ The application uses **Spring Profiles** to separate environments:
 * `local` – Local development with PostgreSQL (Docker)
 * `prod` – Production environment (Railway)
 * `test` – Isolated test configuration
+* `jpa-test` - Test configuration for integration tests
 
 Profiles are activated via environment variables and Maven/IDE configuration.
 
@@ -318,11 +380,16 @@ All production configuration is provided via environment variables.
 
 ## 📚 Lessons Learned
 
-* Designing a clean, layered backend architecture
-* Applying pragmatic testing strategies
-* Managing environment-specific configuration
-* Debugging containerized Spring Boot applications
-* Deploying and operating a backend service in the cloud
+* Designing a clean, layered backend architecture (controller, service, repository, model)
+* Applying pragmatic, layered testing strategies (unit, controller, integration)
+* Implementing user management and authentication with Spring Security and JWT
+* Validating input using Jakarta Bean Validation and handling validation errors gracefully
+* Standardizing API error responses for predictable frontend integration
+* Managing environment-specific configuration with Spring Profiles
+* Debugging and running containerized Spring Boot applications locally and in production
+* Deploying and operating a backend service in the cloud (Railway)
+
+---
 
 This project is for demonstration and learning purposes. 
 
