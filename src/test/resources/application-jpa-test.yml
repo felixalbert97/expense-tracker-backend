@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;
+         MODE=PostgreSQL;
+         DATABASE_TO_LOWER=TRUE;
+         DEFAULT_NULL_ORDERING=HIGH;
+         DB_CLOSE_DELAY=-1;
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+
+  h2:
+    console:
+      enabled: false
+
+jwt:
+  secret: test-jwt-secret-123456789012345678901234567890
+  access-token-expiration: 15m
+
+auth:
+  refresh-token-expiration: 30d

@@ -17,7 +17,7 @@ import de.felixalbert.expensetracker.user.model.UserTestDataBuilder;
 import de.felixalbert.expensetracker.user.repository.UserRepository;
 
 @DataJpaTest
-@ActiveProfiles("test")
+@ActiveProfiles("jpa-test")
 class ExpenseRepositoryIntegrationTests {
 
     @Autowired

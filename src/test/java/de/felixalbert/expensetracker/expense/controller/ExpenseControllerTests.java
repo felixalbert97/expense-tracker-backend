@@ -40,7 +40,7 @@ class ExpenseControllerTests {
     private ExpenseService expenseService;
 
     @MockitoBean
-    private final JwtService jwtService = new JwtService("secret", Duration.ofSeconds(1L));
+    private final JwtService jwtService = new JwtService("secret-must-be-veeeery-veeeeery-long-but-is-just-for-mocking", Duration.ofSeconds(1L));
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
