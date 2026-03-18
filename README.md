@@ -1,3 +1,5 @@
+![CI](https://github.com/felixalbert97/expense-tracker-backend/actions/workflows/ci.yml/badge.svg)
+
 # Expense Tracker – Backend
 
 Backend service for an Expense Tracker application built with **Spring Boot**.
@@ -14,7 +16,7 @@ to run **locally, containerized, and in the cloud**.
 The main goal of this project was to gain hands-on experience with **professional backend development practices**, including:
 
 * Designing a clean REST API with centralized exception handling
-* Applying a layered testing strategy (unit, web, persistence)
+* Applying a layered testing strategy (unit, web, persistence) with automated execution via CI
 * Implementing basic user management and authentication (JWT access + refresh tokens)
 * Environment-specific configuration using Spring Profiles
 * Containerizing a Spring Boot application with Docker
@@ -38,6 +40,7 @@ The focus of this project is **architecture, testability, security, and deployme
 * PostgreSQL database (local & production)
 * Dockerized setup for local development and production
 * Deployed to Railway
+* Automated test execution via GitHub Actions (CI)
 
 ---
 
@@ -56,7 +59,7 @@ The backend implements **basic user management and authentication**:
 
 ## 🧪 Testing Strategy 
 
-This project follows a **layered testing approach** to ensure fast feedback,
+This project follows a **layered testing approach** with automated execution on every push via GitHub Actions to ensure fast feedback,
 clear responsibilities per test type, and long-term maintainability.
 
 The focus is on **deterministic and fast tests**, rather than many slow end-to-end tests.
@@ -118,7 +121,7 @@ The following aspects were intentionally kept minimal or are not included:
 
 * Advanced authentication/authorization flows (e.g., roles, permissions, OAuth)
 * Pagination, filtering, or sorting for API endpoints
-* CI/CD pipelines
+* Full CI/CD pipeline
 * Full end-to-end (E2E) test coverage
 
 What **is implemented**:
@@ -126,6 +129,7 @@ What **is implemented**:
 * Basic user registration and JWT-based login with refresh tokens
 * Secure password storage with BCrypt
 * Token expiration and invalidation handling
+* CI for test automation
 
 ---
 
@@ -142,6 +146,7 @@ What **is implemented**:
 * **H2** (in-memory test database)
 * **Docker & Docker Compose** (local dev + production-like setups)
 * **JUnit 5 & Mockito** (unit & integration testing)
+* **GitHub Actions (CI)**
 * **Railway** (production deployment)
 * **Jakarta Validation / Bean Validation** (API-level validation)
 * **BCrypt** (secure password hashing)
@@ -388,6 +393,7 @@ All production configuration is provided via environment variables.
 * Managing environment-specific configuration with Spring Profiles
 * Debugging and running containerized Spring Boot applications locally and in production
 * Deploying and operating a backend service in the cloud (Railway)
+* Setting up automated test execution using GitHub Actions (CI)
 
 ---
 
